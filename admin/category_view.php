@@ -23,6 +23,7 @@
    <link rel="stylesheet" type="text/css" href="assets/uniform/css/uniform.default.css" />
    <link rel="stylesheet" href="assets/data-tables/DT_bootstrap.css" />
    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">-->
+   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
    
 
 </head>
@@ -120,7 +121,7 @@
                                                      <td><?php echo $row['c_name']?></td>
                                                      <td><?php echo $row['c_description']?></td>
                                                      <td id="<?php echo $row['c_id']?>">
-                                                     <button class="btn btn-danger btn-sm remove">Delete</button>
+                                                     <a href="javascript:void(0)" class="delete_btn_ajax btn btn-danger">Delete</a>
                                                      <a href="category_update.php?id=<?php echo $row['c_id']?>"><button type="button" class="btn btn-success">Update</button></a>
                                                      </td>
 		                                        </tr>
@@ -179,14 +180,24 @@
            EditableTable.init();
        });
    </script>
-   <script type="text/javascript">
-    $(".remove").click(function(){
-        var id = $(this).parents("td").attr("id");
+   <script>
+     $(document).ready(function() {
+        $(".delete_btn_ajax").click(function(e){
 
+            e.preventDefault();
+            
+         var id = $(this).parents("td").attr("id");
+        // console.log(id);
 
-        if(confirm('Are you sure to remove this record ?'))
-        {
-            $.ajax({
+         swal({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover this Record!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            }).then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
                url: 'category_delete.php',
                type: 'GET',
                data: {id: id},
@@ -194,13 +205,28 @@
                   alert('Something is wrong');
                },
                success: function(data) {
-                    $("#"+id).remove();
-                    alert("Record removed successfully");  
-               }
-            });
-        }
+                swal("Successfully Deleted !",{
+                    icon: "success",
+                    }).then((result) => {
+                        location.reload();
+
+                });
+
+                   
+            }
+         });
+        
+               
+         } 
     });
 
+        
+    });
+
+          
+     });
+
+   
 
 </script>
   

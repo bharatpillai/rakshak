@@ -17,7 +17,7 @@
    <meta content="" name="description" />
    <meta content="" name="author" />
    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-     <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+   <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
    <link href="assets/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" />
    <link href="assets/bootstrap/css/bootstrap-fileupload.css" rel="stylesheet" />
    <link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet" />
@@ -30,6 +30,7 @@
    <link rel="stylesheet" href="assets/data-tables/buttons.dataTables.min.css" />
 
    <link rel="stylesheet" href="assets/data-tables/DT_bootstrap.css" />
+   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 
 
@@ -126,7 +127,7 @@
                                                     <td><?php  echo  $row['s_desc'];?></td>
                                                     <td> <img src="<?php echo  $imageURL = 'images_all/'.$row['s_img']; ?>" alt="" width="80px"/></td>
                                                     <td id="<?php echo $row['s_id']?>">
-                                                     <button class="btn btn-danger btn-sm remove">Delete</button>
+                                                    <a href="javascript:void(0)" class="delete_btn_ajax btn btn-danger">Delete</a>
                                                      <a href="service_update.php?id=<?php echo $row['s_id']?>"><button type="button" class="btn btn-success">Update</button></a>
                                                      </td>
 
@@ -187,14 +188,24 @@
            EditableTable.init();
        });
    </script>
-    <script type="text/javascript">
-    $(".remove").click(function(){
-        var id = $(this).parents("td").attr("id");
+    <script>
+     $(document).ready(function() {
+        $(".delete_btn_ajax").click(function(e){
 
+            e.preventDefault();
+            
+         var id = $(this).parents("td").attr("id");
+        // console.log(id);
 
-        if(confirm('Are you sure to remove this record ?'))
-        {
-            $.ajax({
+         swal({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover this Record!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            }).then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
                url: 'service_delete.php',
                type: 'GET',
                data: {id: id},
@@ -202,15 +213,31 @@
                   alert('Something is wrong');
                },
                success: function(data) {
-                    $("#"+id).remove();
-                    alert("Record removed successfully");  
-               }
-            });
-        }
+                swal("Successfully Deleted !",{
+                    icon: "success",
+                    }).then((result) => {
+                        location.reload();
+
+                });
+
+                   
+            }
+         });
+        
+               
+         } 
     });
 
+        
+    });
+
+          
+     });
+
+   
 
 </script>
+  
 </body>
 <!-- END BODY -->
 
